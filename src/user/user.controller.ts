@@ -60,6 +60,14 @@ export class UserController {
     else throw new HttpException('User not found!', HttpStatus.BAD_REQUEST);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get('/email/:email')
+  async findOneEmail(@Param('email') email: string) {
+    const user = await this.userService.findOneByEmail(email);
+    if (user) return new SerializedUser(user);
+    else throw new HttpException('User not found!', HttpStatus.BAD_REQUEST);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(+id, updateUserDto);
