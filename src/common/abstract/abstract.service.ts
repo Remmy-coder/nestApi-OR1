@@ -14,6 +14,13 @@ export class AbstractService<T> {
     return await this.repository.find();
   }
 
+  async findOneByEmail(email: any): Promise<T> {
+    const options: any = { email };
+    const entity = await this.repository.findOne({ where: options });
+
+    return entity;
+  }
+
   async findOne(id: number): Promise<T> {
     const options: any = { id };
     const entity = await this.repository.findOne({
