@@ -2,8 +2,11 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AbstractService } from 'src/common/abstract/abstract.service';
 import { Repository } from 'typeorm';
-import { User } from './entities/user.entity';
+import { SerializedUser, User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
+import { Pagination } from 'nestjs-typeorm-paginate/dist/pagination';
 
 @Injectable()
 export class UserService extends AbstractService<User> {
@@ -29,12 +32,18 @@ export class UserService extends AbstractService<User> {
       );
     }
 
-    const user = new User();
-    user.email = createUserDto.email;
-    user.firstName = createUserDto.firstName;
-    user.lastName = createUserDto.lastName;
-    user.password = createUserDto.password;
+    return await this.userRepository.create(createUserDto);
+  }
 
-    return await user.save();
+  async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    return await this.userRepository.save({ id, ...updateUserDto });
+  }
+
+  async paginate(
+    options: IPaginationOptions,
+  ): Promise<Pagination<SerializedUser>> {
+    const queryBuilder = this.userRepository.createQueryBuilder('user');
+    queryBuilder.orderBy('user.lastName', 'DESC');
+    return paginate<SerializedUser>(this.userRepository, options);
   }
 }
