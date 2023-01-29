@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Exclude } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -41,15 +42,31 @@ export class User extends BaseEntity {
 }
 
 export class SerializedUser extends User {
+  @ApiProperty({
+    description: 'Primary key as User ID',
+    example: 1,
+  })
   @PrimaryGeneratedColumn()
   id: number;
 
+  @ApiProperty({
+    description: 'A valid email address of the user',
+    example: 'john.doe@email.com',
+  })
   @Column({ unique: true })
   email: string;
 
+  @ApiProperty({
+    description: 'First name of the user',
+    example: 'John',
+  })
   @Column()
   firstName: string;
 
+  @ApiProperty({
+    description: 'Last name of the user',
+    example: 'Doe',
+  })
   @Column()
   lastName: string;
 
@@ -57,9 +74,15 @@ export class SerializedUser extends User {
   @Exclude()
   password: string;
 
+  @ApiProperty({
+    description: 'When user was created',
+  })
   @CreateDateColumn()
   createdAt: Date;
 
+  @ApiProperty({
+    description: 'When user was created',
+  })
   @UpdateDateColumn()
   updatedAt: Date;
 
